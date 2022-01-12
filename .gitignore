@@ -10,6 +10,7 @@ param/refine
 utils/__pycache__/
 gnns/__pycache__/
 datasets/__pycache__/
+explainers/__pycache__/
 visual_genome/
 
 nohup.out
