@@ -27,22 +27,34 @@ def parse_args():
                         help='Fine-tuning learning rate.')
     parser.add_argument('--epoch', type=int, default=20,
                         help='Fine-tuning rpoch.')
+    parser.add_argument('--mod', help='use ReFineMod', action='store_true')
     return parser.parse_args()
     
-
 args = parse_args()
 results = {}
 if args.dataset == 'ba3':
     ground_truth = True
 else:
     ground_truth = False
+
 device = torch.device(f"cuda:{args.cuda}" if torch.cuda.is_available() else "cpu")
+
+if not args.mod:
+    print(f"Using ReFine model with device {device}")
+else:
+    print(f"Using ReFineMod model with device {device}")
+
 train_dataset, val_dataset, test_dataset = get_datasets(name=args.dataset)
-graph_mask = torch.load(f'param/filtered/{args.dataset}_idx_test.pt')
+mod_path = "_mod" if args.mod else ""
+graph_mask_path = f'param/filtered/{args.dataset}{mod_path}_idx_test.pt'
+print(f"Loading graph mask from {graph_mask_path}")
+graph_mask = torch.load(graph_mask_path)
 test_loader = DataLoader(test_dataset[graph_mask], batch_size=1, shuffle=False, drop_last=False)
 ratios = [0.1 *i for i in range(1,11)]
 
-refine = torch.load(f'param/refine/{args.dataset}.pt')
+refine_model_path = f'param/refine/{args.dataset}{mod_path}.pt'
+print(f"Loading model from {refine_model_path}")
+refine = torch.load(refine_model_path)
 refine.remap_device(device)
 
 #-------------------------------------------------------

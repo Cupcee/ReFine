@@ -43,7 +43,7 @@ def parse_args():
     parser.add_argument('--lr', type=float, default=1e-3, help='Learning Rate.')
     parser.add_argument('--batch_size', type=int, default=256, help='Batch size.')
     parser.add_argument('--random_seed', type=int, default=0)
-
+    parser.add_argument('--mod', help='use ReFineMod', action='store_true')
     return parser.parse_args()
 
 # get dataset
@@ -55,6 +55,7 @@ train_dataset, val_dataset, test_dataset = get_datasets(args.dataset, root=data_
 device = torch.device(f"cuda:{args.cuda}" if torch.cuda.is_available() else "cpu")
 os.makedirs(log_root, exist_ok=True)
 logger = Logger.init_logger(filename=log_root + f"/refine-{args.dataset}.log" )
+
 
 if args.dataset == 'graphsst2':
     dataloader = get_dataloader(
@@ -69,9 +70,10 @@ else:
     for label, dataset in zip(['train', 'val', 'test'], [train_dataset, val_dataset, test_dataset]):
         batch_size = 1 if label=='test' else args.batch_size
         dataset_mask = []
-        flitered_path = osp.join(param_root, f"filtered/{args.dataset}_idx_{label}.pt")
+        mod_path = "_mod" if args.mod else "" 
+        flitered_path = osp.join(param_root, f"filtered/{args.dataset}{mod_path}_idx_{label}.pt")
         if osp.exists(flitered_path):
-            graph_mask = torch.load(flitered_path, map_location=device)
+            graph_mask = torch.load(flitered_path)
         else:
             os.makedirs(osp.join(param_root, "filtered"), exist_ok=True)
             loader = DataLoader(dataset,
@@ -79,7 +81,7 @@ else:
                                 shuffle=False
                                 )
             # filter graphs with right prediction
-            model = torch.load(path, map_location=device).to(device)
+            model = torch.load(path).to(device)
             graph_mask = torch.zeros(len(loader.dataset), dtype=torch.bool)
             idx = 0
             for g in tqdm(iter(loader), total=len(loader)):
@@ -96,8 +98,15 @@ else:
         logger.info("number of graphs(%s): %4d" % (label, graph_mask.nonzero().size(0)))
         exec("%s_loader = DataLoader(dataset[graph_mask], batch_size=%d, shuffle=False, drop_last=False)" % \
                                     (label, batch_size))
-
-explainer = ReFineMod(device, path, gamma=args.gamma,
+if not args.mod:
+    print(f"Training ReFine with device {device}")
+    explainer = ReFine(device, path, gamma=args.gamma,
+                  n_in_channels=torch.flatten(train_dataset[0].x, 1, -1).size(1),
+                  e_in_channels=train_dataset[0].edge_attr.size(1),
+                  n_label=n_classes_dict[args.dataset])
+else:
+    print(f"Training ReFineMod with device {device}")
+    explainer = ReFineMod(device, path, gamma=args.gamma,
                   n_in_channels=torch.flatten(train_dataset[0].x, 1, -1).size(1),
                   e_in_channels=train_dataset[0].edge_attr.size(1),
                   n_label=n_classes_dict[args.dataset])
@@ -166,4 +175,5 @@ for epoch in range(args.epoch):
 
 model_dir = osp.join(param_root, "refine/")
 os.makedirs(model_dir, exist_ok=True)
-torch.save(explainer, osp.join(model_dir, f'{args.dataset}.pt'))
+mod_path = "_mod" if args.mod else "" 
+torch.save(explainer, osp.join(model_dir, f'{args.dataset}{mod_path}.pt'))
