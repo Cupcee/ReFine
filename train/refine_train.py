@@ -19,6 +19,7 @@ from gnns import *
 from datasets.graphss2_dataset import get_dataloader  
 from utils import set_seed
 from explainers import ReFine
+from explainers.refine_modified import ReFineMod
 from utils.dataset import get_datasets
 from utils.logger import Logger
 
@@ -70,7 +71,7 @@ else:
         dataset_mask = []
         flitered_path = osp.join(param_root, f"filtered/{args.dataset}_idx_{label}.pt")
         if osp.exists(flitered_path):
-            graph_mask = torch.load(flitered_path)
+            graph_mask = torch.load(flitered_path, map_location=device)
         else:
             os.makedirs(osp.join(param_root, "filtered"), exist_ok=True)
             loader = DataLoader(dataset,
@@ -78,7 +79,7 @@ else:
                                 shuffle=False
                                 )
             # filter graphs with right prediction
-            model = torch.load(path).to(device)
+            model = torch.load(path, map_location=device).to(device)
             graph_mask = torch.zeros(len(loader.dataset), dtype=torch.bool)
             idx = 0
             for g in tqdm(iter(loader), total=len(loader)):
@@ -96,7 +97,7 @@ else:
         exec("%s_loader = DataLoader(dataset[graph_mask], batch_size=%d, shuffle=False, drop_last=False)" % \
                                     (label, batch_size))
 
-explainer = ReFine(device, path, gamma=args.gamma,
+explainer = ReFineMod(device, path, gamma=args.gamma,
                   n_in_channels=torch.flatten(train_dataset[0].x, 1, -1).size(1),
                   e_in_channels=train_dataset[0].edge_attr.size(1),
                   n_label=n_classes_dict[args.dataset])

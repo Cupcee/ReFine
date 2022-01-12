@@ -14,3 +14,5 @@ visual_genome/
 
 nohup.out
 train/nohup.out
+
+venv/
