@@ -99,7 +99,8 @@ class ReFineMod(Explainer):
     def get_contrastive_loss(self, c, y, batch, tau=0.1):
         
         c = c / c.norm(dim=1, keepdim=True)
-        mat = F.relu(torch.mm(c, c.T))
+        #mat = F.relu(torch.mm(c, c.T))
+        mat = torch.mm(c, c.T)
         unique_graphs = torch.unique(batch)
 
         ttl_scores = torch.sum(mat, dim=1)
@@ -116,7 +117,7 @@ class ReFineMod(Explainer):
         mask = torch.FloatTensor([]).to(graph.x.device)
         for i in range(len(graph.y)):
             edge_indicator = (graph_map == i).bool()
-            G_i_mask = self.edge_mask[0](
+            G_i_mask = self.edge_mask[0]( #graph.y[i] 
                 graph.x,
                 graph.edge_index[:, edge_indicator],
                 graph.edge_attr[edge_indicator, :]
@@ -162,7 +163,7 @@ class ReFineMod(Explainer):
                 self.visualize(graph, imp, vis_ratio=vis_ratio)
             return imp
 
-        mask_net = copy.deepcopy(self.edge_mask[0])
+        mask_net = copy.deepcopy(self.edge_mask[0]) #graph.y.item()
         optimizer = torch.optim.Adam(mask_net.parameters(), lr=lr)
         for _ in range(epoch):
             optimizer.zero_grad()

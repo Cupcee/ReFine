@@ -29,7 +29,7 @@ def parse_args():
                         help='Fine-tuning rpoch.')
     parser.add_argument('--mod', help='use ReFineMod', action='store_true')
     return parser.parse_args()
-    
+
 args = parse_args()
 results = {}
 if args.dataset == 'ba3':
@@ -67,7 +67,7 @@ for g in tqdm(iter(test_loader), total=len(test_loader)):
     if ground_truth:
         recall_logger.append(refine.evaluate_recall(topk=5))
 
-results["ReFine-FT"] = {"ROC-AUC": list(np.array(acc_logger).mean(axis=0)[0]), 
+results["ReFine-FT"] = {"ROC-AUC": list(np.array(acc_logger).mean(axis=0)[0]),
                         "ACC-AUC": np.array(acc_logger).mean(axis=0).mean(),
                         "Recall@5": "nan" if not ground_truth else np.array(recall_logger).mean(axis=0)}
 
@@ -98,5 +98,6 @@ if ground_truth:
 
 print(results)
 os.makedirs(args.result_dir, exist_ok=True)
-with open(os.path.join(args.result_dir, f"{args.dataset}_results.json"), "w") as f:
+mod_path = "_mod" if args.mod else ""
+with open(os.path.join(args.result_dir, f"{args.dataset}{mod_path}_results.json"), "w") as f:
         json.dump(results, f, indent=4)
