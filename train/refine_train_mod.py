@@ -18,7 +18,6 @@ sys.path.append('..')
 from gnns import *
 from datasets.graphss2_dataset import get_dataloader
 from utils import set_seed
-from explainers import ReFine
 from explainers.refine_modified import ReFineMod
 from utils.dataset import get_datasets
 from utils.logger import Logger
@@ -43,7 +42,6 @@ def parse_args():
     parser.add_argument('--lr', type=float, default=1e-3, help='Learning Rate.')
     parser.add_argument('--batch_size', type=int, default=256, help='Batch size.')
     parser.add_argument('--random_seed', type=int, default=0)
-    parser.add_argument('--mod', help='use ReFineMod', action='store_true')
     return parser.parse_args()
 
 # get dataset
@@ -71,7 +69,7 @@ else:
     for label, dataset in zip(['train', 'val', 'test'], [train_dataset, val_dataset, test_dataset]):
         batch_size = 1 if label=='test' else args.batch_size
         dataset_mask = []
-        mod_path = "_mod" if args.mod else ""
+        mod_path = "_mod"
         flitered_path = osp.join(param_root, f"filtered/{args.dataset}{mod_path}_idx_{label}.pt")
         if osp.exists(flitered_path):
             graph_mask = torch.load(flitered_path)
@@ -99,18 +97,12 @@ else:
         logger.info("number of graphs(%s): %4d" % (label, graph_mask.nonzero().size(0)))
         exec("%s_loader = DataLoader(dataset[graph_mask], batch_size=%d, shuffle=False, drop_last=False)" % \
                                     (label, batch_size))
-if not args.mod:
-    print(f"Training ReFine with device {device}")
-    explainer = ReFine(device, path, gamma=args.gamma,
-                  n_in_channels=torch.flatten(train_dataset[0].x, 1, -1).size(1),
-                  e_in_channels=train_dataset[0].edge_attr.size(1),
-                  n_label=n_classes_dict[args.dataset])
-else:
-    print(f"Training ReFineMod with device {device}")
-    explainer = ReFineMod(device, path, gamma=args.gamma,
-                  n_in_channels=torch.flatten(train_dataset[0].x, 1, -1).size(1),
-                  e_in_channels=train_dataset[0].edge_attr.size(1),
-                  n_label=n_classes_dict[args.dataset])
+
+print(f"Training ReFineMod with device {device}")
+explainer = ReFineMod(device, path, gamma=args.gamma,
+              n_in_channels=torch.flatten(train_dataset[0].x, 1, -1).size(1),
+              e_in_channels=train_dataset[0].edge_attr.size(1),
+              n_label=n_classes_dict[args.dataset])
 
 parameters = list()
 
@@ -129,8 +121,6 @@ loss_all = 0
 for epoch in range(args.epoch):
     for g in train_loader:
         g.to(device)
-        print(g.x)
-        print(g.y)
         optimizer.zero_grad()
         loss = explainer.pretrain(
             g,
@@ -178,5 +168,5 @@ for epoch in range(args.epoch):
 
 model_dir = osp.join(param_root, "refine/")
 os.makedirs(model_dir, exist_ok=True)
-mod_path = "_mod" if args.mod else ""
+mod_path = "_mod"
 torch.save(explainer, osp.join(model_dir, f'{args.dataset}{mod_path}.pt'))

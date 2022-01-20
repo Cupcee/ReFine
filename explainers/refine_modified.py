@@ -8,7 +8,7 @@ from torch.nn import functional as F
 
 from torch_geometric.nn import MessagePassing
 from explainers.base import Explainer
-from .common import EdgeMaskNet
+from .common_mod import EdgeMaskNetMod
 
 EPS = 1e-6
 
@@ -30,7 +30,7 @@ class ReFineMod(Explainer):
                  gamma=1):
         super(ReFineMod, self).__init__(device, gnn_model)
 
-        self.edge_mask = EdgeMaskNet(n_in_channels,
+        self.edge_mask = EdgeMaskNetMod(n_in_channels,
                                      e_in_channels,
                                      hid=hid,
                                      n_layers=n_layers).to(device)
@@ -109,8 +109,7 @@ class ReFineMod(Explainer):
     def get_contrastive_loss(self, c, y, batch, tau=0.1):
 
         c = c / c.norm(dim=1, keepdim=True)
-        mat = torch.mm(c, c.T)
-        #mat = F.relu(torch.mm(c, c.T))
+        mat = F.relu(torch.mm(c, c.T))
         unique_graphs = torch.unique(batch)
 
         ttl_scores = torch.sum(mat, dim=1)
@@ -126,24 +125,16 @@ class ReFineMod(Explainer):
     def get_mask(self, graph):
         # batch version
         graph_map = graph.batch[graph.edge_index[0, :]]
-        edge_indicator = (graph_map == 0).bool()
-        G_i_mask = self.edge_mask(graph.x, graph.edge_index[:, edge_indicator],
-                                  graph.edge_attr[edge_indicator, :]).view(-1)
-        return G_i_mask.to(graph.x.device)
-
-    #def get_mask(self, graph):
-    #    # batch version
-    #    graph_map = graph.batch[graph.edge_index[0, :]]
-    #    mask = torch.FloatTensor([]).to(graph.x.device)
-    #    for i in range(len(graph.y)):
-    #        edge_indicator = (graph_map == i).bool()
-    #        G_i_mask = self.edge_mask[graph.y[i]](
-    #            graph.x,
-    #            graph.edge_index[:, edge_indicator],
-    #            graph.edge_attr[edge_indicator, :]
-    #        ).view(-1)
-    #        mask = torch.cat([mask, G_i_mask])
-    #    return mask
+        mask = torch.FloatTensor([]).to(self.device)
+        for i in range(len(graph.y)):
+            edge_indicator = (graph_map == i).bool()
+            G_i_mask = self.edge_mask(
+                graph.x,
+                graph.edge_index[:, edge_indicator],
+                graph.edge_attr[edge_indicator, :]
+            ).view(-1)
+            mask = torch.cat([mask, G_i_mask])
+        return mask
 
     def get_pos_edge(self, graph, mask, ratio):
 
@@ -208,8 +199,8 @@ class ReFineMod(Explainer):
                                     batch=G1_batch,
                                     pos=G1_pos)
             self.__clear_masks__(self.model)
-            fid_loss = self.fidelity_loss(log_logits, edge_mask, graph.y)
-            fid_loss.backward()
+            loss = self.__loss__(log_logits, edge_mask, graph.y)
+            loss.backward()
             optimizer.step()
 
         imp = edge_mask.detach().cpu().numpy()
@@ -301,7 +292,6 @@ class ReFineMod(Explainer):
         #loss =  fid_loss + self.gamma * cts_loss
 
         self.__set_masks__(edge_mask, self.model)
-        print(self.model)
         log_logits = self.model(graph)
         loss = self.__loss__(log_logits, edge_mask, graph.y)
         self.__clear_masks__(self.model)
