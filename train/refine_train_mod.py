@@ -113,9 +113,9 @@ else:
                   n_label=n_classes_dict[args.dataset])
 
 parameters = list()
-for k, edge_mask in enumerate(explainer.edge_mask):
-    edge_mask.train()
-    parameters += list(explainer.edge_mask[k].parameters())
+
+explainer.edge_mask.train()
+parameters += list(explainer.edge_mask.parameters())
 
 optimizer = torch.optim.Adam(parameters, lr=args.lr)
 scheduler = ReduceLROnPlateau(optimizer,

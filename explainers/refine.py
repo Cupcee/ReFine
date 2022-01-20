@@ -36,7 +36,7 @@ class ReFine(Explainer):
         self.gamma = gamma
 
     def __set_masks__(self, mask, model):
-    
+
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 module.__explain__ = True
@@ -49,7 +49,7 @@ class ReFine(Explainer):
                 module.__edge_mask__ = None
 
     def __reparameterize__(self, log_alpha, beta=1, training=True):
-        
+
         if training:
             random_noise = torch.rand(log_alpha.size()).to(self.device)
             gate_inputs = torch.log2(random_noise) - torch.log2(1.0 - random_noise)
@@ -57,7 +57,7 @@ class ReFine(Explainer):
             gate_inputs = gate_inputs.sigmoid()
         else:
             gate_inputs = log_alpha.sigmoid()
-            
+
         return gate_inputs
 
     def fidelity_loss(self, log_logits, mask, pred_label):
@@ -97,17 +97,17 @@ class ReFine(Explainer):
         return exp_subgraph, imp[top_idx]
 
     def get_contrastive_loss(self, c, y, batch, tau=0.1):
-        
+
         c = c / c.norm(dim=1, keepdim=True)
         mat = F.relu(torch.mm(c, c.T))
         unique_graphs = torch.unique(batch)
 
         ttl_scores = torch.sum(mat, dim=1)
         pos_scores = torch.tensor([mat[i, y == y[i]].sum() for i in unique_graphs]).to(c.device)
-        
+
         # contrastive_loss = - torch.log(torch.sum(pos_scores / ttl_scores, dim=0))
         contrastive_loss = - torch.logsumexp(pos_scores / (tau * ttl_scores), dim=0)
-        
+
         return contrastive_loss
 
     def get_mask(self, graph):
@@ -151,13 +151,13 @@ class ReFine(Explainer):
     def explain_graph(
         self, graph, ratio=1.0, fine_tune=False,
         lr=1e-4, epoch=50, draw_graph=0, vis_ratio=0.2):
-        
+
         if not fine_tune:
             edge_mask = self.get_mask(graph)
             edge_mask = self.__reparameterize__(edge_mask, training=False)
             imp = edge_mask.detach().cpu().numpy()
             self.last_result = (graph, imp)
-            
+
             if draw_graph:
                 self.visualize(graph, imp, vis_ratio=vis_ratio)
             return imp
@@ -191,10 +191,10 @@ class ReFine(Explainer):
             fid_loss = self.fidelity_loss(log_logits, edge_mask, graph.y)
             fid_loss.backward()
             optimizer.step()
-        
+
         imp = edge_mask.detach().cpu().numpy()
         self.last_result = (graph, imp)
-        
+
         if draw_graph:
             self.visualize(graph, imp, vis_ratio=vis_ratio)
         return imp
@@ -209,14 +209,14 @@ class ReFine(Explainer):
 
         ori_mask = self.get_mask(graph)
         edge_mask = self.__reparameterize__(ori_mask, training=reperameter)
-        
+
         # ----------------------------------------------------
         # (1) compute fidelity loss
         self.__set_masks__(edge_mask, self.model)
         log_logits = self.model(graph)
         fid_loss = self.fidelity_loss(log_logits, edge_mask, graph.y)
         self.__clear_masks__(self.model)
-        
+
         # ----------------------------------------------------
         # (2) compute contrastive loss
         pos_idx, _, _, _ = self.get_pos_edge(graph, edge_mask, ratio)
@@ -236,9 +236,9 @@ class ReFine(Explainer):
         self.__clear_masks__(self.model)
 
         loss =  fid_loss + self.gamma * cts_loss
-        
+
         return loss
-    
+
     def remap_device(self, device):
         self.device = device
         self.model = self.model.to(device)
