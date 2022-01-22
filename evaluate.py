@@ -28,6 +28,7 @@ def parse_args():
     parser.add_argument('--epoch', type=int, default=20,
                         help='Fine-tuning rpoch.')
     parser.add_argument('--mod', help='use ReFineMod', action='store_true')
+    parser.add_argument('--no_relu', help='use ReFineNoReLU', action='store_true')
     return parser.parse_args()
 
 args = parse_args()
@@ -39,13 +40,18 @@ else:
 
 device = torch.device(f"cuda:{args.cuda}" if torch.cuda.is_available() else "cpu")
 
-if not args.mod:
-    print(f"Using ReFine model with device {device}")
-else:
+if args.mod:
     print(f"Using ReFineMod model with device {device}")
+    mod_path = "_mod"
+elif args.no_relu:
+    print(f"Using ReFineNoReLU model with device {device}")
+    mod_path = "_no_relu"
+else:
+    print(f"Using ReFine model with device {device}")
+    mod_path = ""
 
 train_dataset, val_dataset, test_dataset = get_datasets(name=args.dataset)
-mod_path = "_mod" if args.mod else ""
+
 graph_mask_path = f'param/filtered/{args.dataset}{mod_path}_idx_test.pt'
 print(f"Loading graph mask from {graph_mask_path}")
 graph_mask = torch.load(graph_mask_path)
@@ -98,6 +104,5 @@ if ground_truth:
 
 print(results)
 os.makedirs(args.result_dir, exist_ok=True)
-mod_path = "_mod" if args.mod else ""
 with open(os.path.join(args.result_dir, f"{args.dataset}{mod_path}_results.json"), "w") as f:
         json.dump(results, f, indent=4)

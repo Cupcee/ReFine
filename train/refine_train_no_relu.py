@@ -18,7 +18,7 @@ sys.path.append('..')
 from gnns import *
 from datasets.graphss2_dataset import get_dataloader
 from utils import set_seed
-from explainers.refine_modified import ReFineMod
+from explainers.refine_no_relu import ReFineNoReLU
 from utils.dataset import get_datasets
 from utils.logger import Logger
 
@@ -55,7 +55,7 @@ device = torch.device(f"cuda:{args.cuda}" if torch.cuda.is_available() else "cpu
 os.makedirs(log_root, exist_ok=True)
 logger = Logger.init_logger(filename=log_root + f"/refine-{args.dataset}.log" )
 
-mod_path = "_mod"
+mod_path = "_no_relu"
 
 if args.dataset == 'graphsst2':
     dataloader = get_dataloader(
@@ -98,16 +98,16 @@ else:
         exec("%s_loader = DataLoader(dataset[graph_mask], batch_size=%d, shuffle=False, drop_last=False)" % \
                                     (label, batch_size))
 
-print(f"Training ReFineMod with device {device}")
-explainer = ReFineMod(device, path, gamma=args.gamma,
+print(f"Training ReFine with device {device}")
+explainer = ReFineNoReLU(device, path, gamma=args.gamma,
               n_in_channels=torch.flatten(train_dataset[0].x, 1, -1).size(1),
               e_in_channels=train_dataset[0].edge_attr.size(1),
               n_label=n_classes_dict[args.dataset])
 
 parameters = list()
-
-explainer.edge_mask.train()
-parameters += list(explainer.edge_mask.parameters())
+for k, edge_mask in enumerate(explainer.edge_mask):
+    edge_mask.train()
+    parameters += list(explainer.edge_mask[k].parameters())
 
 optimizer = torch.optim.Adam(parameters, lr=args.lr)
 scheduler = ReduceLROnPlateau(optimizer,
