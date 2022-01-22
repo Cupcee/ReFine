@@ -1,0 +1,5 @@
+# ReFine
+python3 refine_train_mod.py --dataset ba3 --hid 50 --epoch 25 --ratio 0.4 --lr 1e-4
+python3 refine_train_mod.py --dataset mnist --hid 50 --epoch 50 --ratio 0.2 --lr 1e-3
+python3 refine_train_mod.py --dataset mutag --hid 100 --epoch 100 --ratio 0.4 --lr 1e-3
+python3 refine_train_mod.py --dataset vg --hid 250 --epoch 100 --ratio 0.2 --lr 1e-3

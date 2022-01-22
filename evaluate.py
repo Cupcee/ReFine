@@ -87,14 +87,14 @@ for i, r in enumerate(ratios):
 results["ReFine"]["ROC-AUC"] = list(tuned)
 results["ReFine"]["ACC-AUC"] = np.mean(tuned)
 
-##---------------------------------------------------
-#if ground_truth:
-#    print("Evaluate ReFine w.r.t. Recall@5...")
-#    for g in tqdm(iter(test_loader), total=len(test_loader)):
-#        g.to(device)
-#        refine.explain_graph(g, fine_tune=True, ratio=0.3, lr=1e-4, epoch=20)
-#        recall_logger.append(refine.evaluate_recall(topk=5))
-#    results["ReFine"]["Recall@5"] = np.mean(recall_logger)
+#---------------------------------------------------
+if ground_truth:
+    print("Evaluate ReFine w.r.t. Recall@5...")
+    for g in tqdm(iter(test_loader), total=len(test_loader)):
+        g.to(device)
+        refine.explain_graph(g, fine_tune=True, ratio=0.3, lr=1e-4, epoch=20)
+        recall_logger.append(refine.evaluate_recall(topk=5))
+    results["ReFine"]["Recall@5"] = np.mean(recall_logger)
 
 print(results)
 os.makedirs(args.result_dir, exist_ok=True)
