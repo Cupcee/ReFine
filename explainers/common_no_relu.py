@@ -13,7 +13,7 @@ class MLP(nn.Module):
         super(MLP, self).__init__()
         self.mlp = nn.Sequential(OrderedDict([
                 ('lin1', Lin(in_channels, hidden_channels)),
-                ('act', act),
+                #('act', act),
                 ('lin2', Lin(hidden_channels, out_channels))
                 ]))
      
