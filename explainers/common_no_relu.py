@@ -33,7 +33,7 @@ class EdgeMaskNet(torch.nn.Module):
         self.convs = ModuleList()
         self.batch_norms = ModuleList()
         for _ in range(n_layers):
-            conv = ARMAConv(in_channels=hid, out_channels=hid)
+            conv = ARMAConv(in_channels=hid, out_channels=hid, act=None)
             self.convs.append(conv)
             self.batch_norms.append(BatchNorm(hid))
 

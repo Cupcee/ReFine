@@ -11,8 +11,9 @@ CLOSED: [2022-01-18 Tue 09:34]
 CLOSED: [2022-01-18 Tue 09:34]
 - CLOSING NOTE [2022-01-18 Tue 09:34] \\
   Does not change much? More testing needed
-** TODO Do tests with ReFine & ReFine without both model list and ReLU
-** TODO See if we can reduce complexity with modified ReFine to speed up training
+** DONE Do tests with ReFine & ReFine without both model list and ReLU
+** DONE See if we can reduce complexity with modified ReFine to speed up training
+** TODO Remove ReLU from ARMAConv
 
 * ReFine thoughts
 1. Train on a dataset of graphs belonging to C classes
