@@ -29,6 +29,7 @@ def parse_args():
                         help='Fine-tuning rpoch.')
     parser.add_argument('--mod', help='use ReFineMod', action='store_true')
     parser.add_argument('--no_relu', help='use ReFineNoReLU', action='store_true')
+    parser.add_argument('--random_seed', help='use model trained with random_seed', type=str, default=None)
     return parser.parse_args()
 
 args = parse_args()
@@ -50,6 +51,8 @@ else:
     print(f"Using ReFine model with device {device}")
     mod_path = ""
 
+seed_path = "_" + args.random_seed if args.random_seed else ""
+
 train_dataset, val_dataset, test_dataset = get_datasets(name=args.dataset)
 
 graph_mask_path = f'param/filtered/{args.dataset}{mod_path}_idx_test.pt'
@@ -58,7 +61,7 @@ graph_mask = torch.load(graph_mask_path)
 test_loader = DataLoader(test_dataset[graph_mask], batch_size=1, shuffle=False, drop_last=False)
 ratios = [0.1 *i for i in range(1,11)]
 
-refine_model_path = f'param/refine/{args.dataset}{mod_path}.pt'
+refine_model_path = f'param/refine/{args.dataset}{mod_path}{seed_path}.pt'
 print(f"Loading model from {refine_model_path}")
 refine = torch.load(refine_model_path)
 refine.remap_device(device)
@@ -104,5 +107,5 @@ if ground_truth:
 
 print(results)
 os.makedirs(args.result_dir, exist_ok=True)
-with open(os.path.join(args.result_dir, f"{args.dataset}{mod_path}_results.json"), "w") as f:
+with open(os.path.join(args.result_dir, f"{args.dataset}{mod_path}_results{seed_path}.json"), "w") as f:
         json.dump(results, f, indent=4)

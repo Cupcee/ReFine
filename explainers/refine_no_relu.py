@@ -99,7 +99,7 @@ class ReFineNoReLU(Explainer):
     def get_contrastive_loss(self, c, y, batch, tau=0.1):
 
         c = c / c.norm(dim=1, keepdim=True)
-        mat = F.relu(torch.mm(c, c.T))
+        mat = torch.mm(c, c.T) #F.relu(torch.mm(c, c.T))
         unique_graphs = torch.unique(batch)
 
         ttl_scores = torch.sum(mat, dim=1)

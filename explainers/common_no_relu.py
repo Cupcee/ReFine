@@ -16,7 +16,7 @@ class MLP(nn.Module):
                 #('act', act),
                 ('lin2', Lin(hidden_channels, out_channels))
                 ]))
-     
+
     def forward(self, x):
         return self.mlp(x)
 
@@ -44,7 +44,7 @@ class EdgeMaskNet(torch.nn.Module):
         else:
             self.mlp = MLP(2 * hid, hid, 1)
         self._initialize_weights()
-        
+
     def forward(self, x, edge_index, edge_attr):
 
         x = torch.flatten(x, 1, -1)
@@ -68,4 +68,4 @@ class EdgeMaskNet(torch.nn.Module):
     def _initialize_weights(self):
             for m in self.modules():
                 if isinstance(m, nn.Linear):
-                    nn.init.xavier_uniform_(m.weight) 
+                    nn.init.xavier_uniform_(m.weight)
