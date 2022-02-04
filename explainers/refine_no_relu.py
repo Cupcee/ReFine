@@ -31,7 +31,7 @@ class ReFineNoReLU(Explainer):
                 n_in_channels,
                 e_in_channels,
                 hid=hid,
-                n_layers=n_layers) for _ in range(n_label)
+                n_layers) for _ in range(n_label)
         ]).to(device)
         self.gamma = gamma
 
