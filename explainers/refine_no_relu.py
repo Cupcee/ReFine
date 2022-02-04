@@ -207,7 +207,7 @@ class ReFineNoReLU(Explainer):
         if model == None:
             model = self.model
 
-        ori_mask = self.get_mask(graph)
+        ori_mask = self.get_mask(graph) # list: for each target y, an edge mask
         edge_mask = self.__reparameterize__(ori_mask, training=reperameter)
 
         # ----------------------------------------------------

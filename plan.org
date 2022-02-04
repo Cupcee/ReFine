@@ -13,9 +13,27 @@ CLOSED: [2022-01-18 Tue 09:34]
   Does not change much? More testing needed
 ** DONE Do tests with ReFine & ReFine without both model list and ReLU
 ** DONE See if we can reduce complexity with modified ReFine to speed up training
-** TODO Remove ReLU from ARMAConv
+** DONE Remove ReLU from ARMAConv
+CLOSED: [2022-01-29 Sat 14:04]
+- CLOSING NOTE [2022-01-29 Sat 14:03] \\
+  Makes no difference
+
 
 * ReFine thoughts
 1. Train on a dataset of graphs belonging to C classes
 2. Model learns a global view of these classes into C models
 3. Then fine-tune before each local explanation on the graph being explained
+
+
+* Test results (rounded to 3 decimal places)
+
+| dataset | seed | ReFine                             | ReFine - no ReLU or Tanh           |
+|---------+------+------------------------------------+------------------------------------|
+| BA3     |    0 | ACC-AUC: 0.563 Recall@5: 0.300     | __ACC-AUC: 0.612 Recall@5: 0.290__ |
+| MNIST   |    0 | ACC-AUC: 0.728                     | __ACC-AUC: 0.753__                 |
+| MUTAG   |    0 | __ACC-AUC: 0.960__                 | ACC-AUC: 0.932                     |
+| BA3     |    1 | __ACC-AUC: 0.639 Recall@5: 0.238__ | ACC-AUC: 0.628 Recall@5: 0.221     |
+| MNIST   |    1 | ACC-AUC: 0.750                     | __ACC-AUC: 0.755__                 |
+| MUTAG   |    1 | __ACC-AUC: 0.947__                 | ACC-AUC: 0.939                     |
+
+* Results are very close (surprise?)
