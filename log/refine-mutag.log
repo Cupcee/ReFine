@@ -1,3 +1,14 @@
-2022-02-04 14:05:27,068 - refine_mod_train.py[line:96] - INFO: number of graphs(train): 2962
-2022-02-04 14:05:27,072 - refine_mod_train.py[line:96] - INFO: number of graphs(val):  401
-2022-02-04 14:05:27,076 - refine_mod_train.py[line:96] - INFO: number of graphs(test):  401
+2022-02-04 16:03:00,454 - refine_train_no_relu.py[line:97] - INFO: number of graphs(train): 2962
+2022-02-04 16:03:00,458 - refine_train_no_relu.py[line:97] - INFO: number of graphs(val):  401
+2022-02-04 16:03:00,461 - refine_train_no_relu.py[line:97] - INFO: number of graphs(test):  401
+2022-02-04 16:03:26,320 - refine_train_no_relu.py[line:161] - INFO: Epoch: 1, LR: 0.00100, Ratio: 0.40, Train Loss: -1.111, Val Loss: -1.151
+2022-02-04 16:03:26,323 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.77 0.81 0.82 0.81 0.75 0.71 0.75 0.84 0.91 1.  ]] ACC-AUC: 0.816 Mean P: 0.751
+2022-02-04 16:03:50,093 - refine_train_no_relu.py[line:161] - INFO: Epoch: 2, LR: 0.00100, Ratio: 0.40, Train Loss: -2.219, Val Loss: -1.151
+2022-02-04 16:04:13,832 - refine_train_no_relu.py[line:161] - INFO: Epoch: 3, LR: 0.00100, Ratio: 0.40, Train Loss: -3.327, Val Loss: -1.151
+2022-02-04 16:04:13,835 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.79 0.8  0.79 0.73 0.69 0.71 0.75 0.86 0.92 1.  ]] ACC-AUC: 0.803 Mean P: 0.795
+2022-02-04 16:04:37,581 - refine_train_no_relu.py[line:161] - INFO: Epoch: 4, LR: 0.00100, Ratio: 0.40, Train Loss: -4.434, Val Loss: -1.151
+2022-02-04 16:05:01,331 - refine_train_no_relu.py[line:161] - INFO: Epoch: 5, LR: 0.00100, Ratio: 0.40, Train Loss: -5.542, Val Loss: -1.151
+2022-02-04 16:05:01,334 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.81 0.82 0.79 0.72 0.68 0.71 0.76 0.86 0.92 1.  ]] ACC-AUC: 0.806 Mean P: 0.799
+2022-02-04 16:05:25,068 - refine_train_no_relu.py[line:161] - INFO: Epoch: 6, LR: 0.00100, Ratio: 0.40, Train Loss: -6.650, Val Loss: -1.151
+2022-02-04 16:05:48,800 - refine_train_no_relu.py[line:161] - INFO: Epoch: 7, LR: 0.00100, Ratio: 0.40, Train Loss: -7.757, Val Loss: -1.151
+2022-02-04 16:05:48,802 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.81 0.82 0.79 0.72 0.68 0.71 0.76 0.86 0.92 1.  ]] ACC-AUC: 0.806 Mean P: 0.799

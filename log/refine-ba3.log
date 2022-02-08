@@ -1,3 +1,41 @@
-2022-02-04 14:04:47,248 - refine_mod_train.py[line:96] - INFO: number of graphs(train): 2185
-2022-02-04 14:04:47,270 - refine_mod_train.py[line:96] - INFO: number of graphs(val):  398
-2022-02-04 14:04:47,274 - refine_mod_train.py[line:96] - INFO: number of graphs(test):  397
+2022-02-04 15:10:17,754 - refine_train_no_relu.py[line:97] - INFO: number of graphs(train): 2185
+2022-02-04 15:10:17,756 - refine_train_no_relu.py[line:97] - INFO: number of graphs(val):  398
+2022-02-04 15:10:17,758 - refine_train_no_relu.py[line:97] - INFO: number of graphs(test):  397
+2022-02-04 15:10:37,824 - refine_train_no_relu.py[line:161] - INFO: Epoch: 1, LR: 0.00010, Ratio: 0.40, Train Loss: -1.175, Val Loss: -1.214
+2022-02-04 15:10:37,826 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.32 0.34 0.37 0.47 0.61 0.86 0.98 1.  ]] ACC-AUC: 0.559 Mean P: 0.481
+2022-02-04 15:10:55,684 - refine_train_no_relu.py[line:161] - INFO: Epoch: 2, LR: 0.00010, Ratio: 0.40, Train Loss: -2.354, Val Loss: -1.214
+2022-02-04 15:11:13,597 - refine_train_no_relu.py[line:161] - INFO: Epoch: 3, LR: 0.00010, Ratio: 0.40, Train Loss: -3.531, Val Loss: -1.217
+2022-02-04 15:11:13,599 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.32 0.36 0.41 0.5  0.63 0.89 0.98 0.99]] ACC-AUC: 0.570 Mean P: 0.485
+2022-02-04 15:11:31,469 - refine_train_no_relu.py[line:161] - INFO: Epoch: 4, LR: 0.00010, Ratio: 0.40, Train Loss: -4.709, Val Loss: -1.214
+2022-02-04 15:11:49,340 - refine_train_no_relu.py[line:161] - INFO: Epoch: 5, LR: 0.00010, Ratio: 0.40, Train Loss: -5.888, Val Loss: -1.218
+2022-02-04 15:11:49,341 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.32 0.35 0.38 0.48 0.61 0.86 0.98 0.99]] ACC-AUC: 0.559 Mean P: 0.485
+2022-02-04 15:12:07,231 - refine_train_no_relu.py[line:161] - INFO: Epoch: 6, LR: 0.00010, Ratio: 0.40, Train Loss: -7.064, Val Loss: -1.215
+2022-02-04 15:12:25,127 - refine_train_no_relu.py[line:161] - INFO: Epoch: 7, LR: 0.00010, Ratio: 0.40, Train Loss: -8.241, Val Loss: -1.215
+2022-02-04 15:12:25,129 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.31 0.35 0.39 0.48 0.61 0.85 0.98 1.  ]] ACC-AUC: 0.560 Mean P: 0.485
+2022-02-04 15:12:43,006 - refine_train_no_relu.py[line:161] - INFO: Epoch: 8, LR: 0.00010, Ratio: 0.40, Train Loss: -9.419, Val Loss: -1.217
+2022-02-04 15:13:00,881 - refine_train_no_relu.py[line:161] - INFO: Epoch: 9, LR: 0.00002, Ratio: 0.40, Train Loss: -10.598, Val Loss: -1.217
+2022-02-04 15:13:00,882 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.32 0.36 0.4  0.5  0.59 0.83 0.98 1.  ]] ACC-AUC: 0.559 Mean P: 0.487
+2022-02-04 15:13:18,782 - refine_train_no_relu.py[line:161] - INFO: Epoch: 10, LR: 0.00002, Ratio: 0.40, Train Loss: -11.778, Val Loss: -1.214
+2022-02-04 15:13:36,668 - refine_train_no_relu.py[line:161] - INFO: Epoch: 11, LR: 0.00002, Ratio: 0.40, Train Loss: -12.956, Val Loss: -1.216
+2022-02-04 15:13:36,670 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.31 0.37 0.37 0.47 0.62 0.87 0.98 1.  ]] ACC-AUC: 0.561 Mean P: 0.487
+2022-02-04 15:13:54,611 - refine_train_no_relu.py[line:161] - INFO: Epoch: 12, LR: 0.00002, Ratio: 0.40, Train Loss: -14.133, Val Loss: -1.218
+2022-02-04 15:14:12,532 - refine_train_no_relu.py[line:161] - INFO: Epoch: 13, LR: 0.00002, Ratio: 0.40, Train Loss: -15.311, Val Loss: -1.215
+2022-02-04 15:14:12,534 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.32 0.36 0.38 0.48 0.62 0.85 0.98 1.  ]] ACC-AUC: 0.561 Mean P: 0.487
+2022-02-04 15:14:30,416 - refine_train_no_relu.py[line:161] - INFO: Epoch: 14, LR: 0.00002, Ratio: 0.40, Train Loss: -16.489, Val Loss: -1.217
+2022-02-04 15:14:48,293 - refine_train_no_relu.py[line:161] - INFO: Epoch: 15, LR: 0.00002, Ratio: 0.40, Train Loss: -17.670, Val Loss: -1.216
+2022-02-04 15:14:48,294 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.31 0.35 0.37 0.48 0.63 0.85 0.98 0.99]] ACC-AUC: 0.558 Mean P: 0.487
+2022-02-04 15:15:06,172 - refine_train_no_relu.py[line:161] - INFO: Epoch: 16, LR: 0.00001, Ratio: 0.40, Train Loss: -18.848, Val Loss: -1.216
+2022-02-04 15:15:24,056 - refine_train_no_relu.py[line:161] - INFO: Epoch: 17, LR: 0.00001, Ratio: 0.40, Train Loss: -20.027, Val Loss: -1.214
+2022-02-04 15:15:24,057 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.31 0.36 0.39 0.5  0.64 0.85 0.99 1.  ]] ACC-AUC: 0.566 Mean P: 0.487
+2022-02-04 15:15:41,962 - refine_train_no_relu.py[line:161] - INFO: Epoch: 18, LR: 0.00001, Ratio: 0.40, Train Loss: -21.205, Val Loss: -1.213
+2022-02-04 15:15:59,875 - refine_train_no_relu.py[line:161] - INFO: Epoch: 19, LR: 0.00001, Ratio: 0.40, Train Loss: -22.383, Val Loss: -1.214
+2022-02-04 15:15:59,876 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.32 0.37 0.39 0.49 0.63 0.87 0.99 0.99]] ACC-AUC: 0.567 Mean P: 0.487
+2022-02-04 15:16:17,811 - refine_train_no_relu.py[line:161] - INFO: Epoch: 20, LR: 0.00001, Ratio: 0.40, Train Loss: -23.561, Val Loss: -1.215
+2022-02-04 15:16:35,666 - refine_train_no_relu.py[line:161] - INFO: Epoch: 21, LR: 0.00001, Ratio: 0.40, Train Loss: -24.739, Val Loss: -1.216
+2022-02-04 15:16:35,667 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.31 0.36 0.38 0.48 0.63 0.86 0.98 1.  ]] ACC-AUC: 0.562 Mean P: 0.487
+2022-02-04 15:16:53,469 - refine_train_no_relu.py[line:161] - INFO: Epoch: 22, LR: 0.00001, Ratio: 0.40, Train Loss: -25.918, Val Loss: -1.212
+2022-02-04 15:17:11,268 - refine_train_no_relu.py[line:161] - INFO: Epoch: 23, LR: 0.00001, Ratio: 0.40, Train Loss: -27.095, Val Loss: -1.214
+2022-02-04 15:17:11,269 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.32 0.36 0.39 0.47 0.63 0.86 0.98 1.  ]] ACC-AUC: 0.563 Mean P: 0.487
+2022-02-04 15:17:29,194 - refine_train_no_relu.py[line:161] - INFO: Epoch: 24, LR: 0.00001, Ratio: 0.40, Train Loss: -28.274, Val Loss: -1.212
+2022-02-04 15:17:47,131 - refine_train_no_relu.py[line:161] - INFO: Epoch: 25, LR: 0.00001, Ratio: 0.40, Train Loss: -29.451, Val Loss: -1.217
+2022-02-04 15:17:47,133 - refine_train_no_relu.py[line:163] - INFO: ACC:[[0.31 0.31 0.31 0.38 0.38 0.48 0.64 0.85 0.98 0.99]] ACC-AUC: 0.564 Mean P: 0.487

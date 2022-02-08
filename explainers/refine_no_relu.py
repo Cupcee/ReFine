@@ -31,18 +31,19 @@ class ReFineNoReLU(Explainer):
                 n_in_channels,
                 e_in_channels,
                 hid=hid,
-                n_layers) for _ in range(n_label)
+                n_layers=n_layers) for _ in range(n_label)
         ]).to(device)
         self.gamma = gamma
 
     def __set_masks__(self, mask, model):
-
+        return
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 module.__explain__ = True
                 module.__edge_mask__ = mask
 
     def __clear_masks__(self, model):
+        return
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 module.__explain__ = False
