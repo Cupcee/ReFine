@@ -8,11 +8,11 @@ from torch.nn import functional as F
 
 from torch_geometric.nn import MessagePassing
 from explainers.base import Explainer
-from .common_no_relu import EdgeMaskNet
+from .common_simple import EdgeMaskNet
 
 EPS = 1e-6
 
-class ReFineNoReLU(Explainer):
+class ReFine(Explainer):
     coeffs = {
         'edge_size': 1e-4,
         'edge_ent': 1e-2,
@@ -24,7 +24,7 @@ class ReFineNoReLU(Explainer):
                  hid=50, n_layers=2,
                  n_label=2, gamma=1
                  ):
-        super(ReFineNoReLU, self).__init__(device, gnn_model)
+        super(ReFine, self).__init__(device, gnn_model)
 
         self.edge_mask = nn.ModuleList([
             EdgeMaskNet(
@@ -36,14 +36,13 @@ class ReFineNoReLU(Explainer):
         self.gamma = gamma
 
     def __set_masks__(self, mask, model):
-        return
+
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 module.__explain__ = True
                 module.__edge_mask__ = mask
 
     def __clear_masks__(self, model):
-        return
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 module.__explain__ = False
@@ -100,7 +99,7 @@ class ReFineNoReLU(Explainer):
     def get_contrastive_loss(self, c, y, batch, tau=0.1):
 
         c = c / c.norm(dim=1, keepdim=True)
-        mat = torch.mm(c, c.T) #F.relu(torch.mm(c, c.T))
+        mat = F.relu(torch.mm(c, c.T))
         unique_graphs = torch.unique(batch)
 
         ttl_scores = torch.sum(mat, dim=1)
@@ -208,7 +207,7 @@ class ReFineNoReLU(Explainer):
         if model == None:
             model = self.model
 
-        ori_mask = self.get_mask(graph) # list: for each target y, an edge mask
+        ori_mask = self.get_mask(graph)
         edge_mask = self.__reparameterize__(ori_mask, training=reperameter)
 
         # ----------------------------------------------------

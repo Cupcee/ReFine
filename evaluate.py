@@ -27,7 +27,7 @@ def parse_args():
                         help='Fine-tuning learning rate.')
     parser.add_argument('--epoch', type=int, default=20,
                         help='Fine-tuning rpoch.')
-    parser.add_argument('--mod', help='use ReFineMod', action='store_true')
+    parser.add_argument('--simple', help='use Simplified ReFine', action='store_true')
     parser.add_argument('--no_relu', help='use ReFineNoReLU', action='store_true')
     parser.add_argument('--random_seed', help='use model trained with random_seed', type=str, default=None)
     return parser.parse_args()
@@ -41,9 +41,9 @@ else:
 
 device = torch.device(f"cuda:{args.cuda}" if torch.cuda.is_available() else "cpu")
 
-if args.mod:
-    print(f"Using ReFineMod model with device {device}")
-    mod_path = "_mod"
+if args.simple:
+    print(f"Using Simplified ReFine model with device {device}")
+    mod_path = "_simple"
 elif args.no_relu:
     print(f"Using ReFineNoReLU model with device {device}")
     mod_path = "_no_relu"
@@ -89,12 +89,12 @@ for i, r in enumerate(ratios):
     for g in tqdm(iter(test_loader), total=len(test_loader)):
         g.to(device)
         refine.explain_graph(g, fine_tune=True, ratio=r, lr=args.lr, epoch=args.epoch)
-        acc_logger.append(refine.evaluate_acc(ratios)[0])
-    results["ReFine"]["R-%.2f" % r] = {"ROC-AUC": list(np.array(acc_logger).mean(axis=0)[0]),
-                                    "ACC-AUC": np.array(acc_logger).mean(axis=0).mean(),}
-    tuned.append(np.array(acc_logger).mean(axis=0)[0,i])
-results["ReFine"]["ROC-AUC"] = list(tuned)
-results["ReFine"]["ACC-AUC"] = np.mean(tuned)
+        acc_logger.append(refine.evaluate_acc(ratios)[0]) # get list of accs for different ratios when training for ratio r
+    results["ReFine"]["R-%.2f" % r] = {"ROC-AUC": list(np.array(acc_logger).mean(axis=0)[0]), # get mean acc score for each ratio in ratios when training for ratio r
+                                    "ACC-AUC": np.array(acc_logger).mean(axis=0).mean(),} # get mean of the acc scores of the ratios when training for ratio r
+    tuned.append(np.array(acc_logger).mean(axis=0)[0,i]) # add mean acc score of ratio r into list
+results["ReFine"]["ROC-AUC"] = list(tuned) # list of mean acc scores when training for each ratio r in ratios
+results["ReFine"]["ACC-AUC"] = np.mean(tuned) # mean of means of acc scores between all ratios
 
 #---------------------------------------------------
 if ground_truth:
