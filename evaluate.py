@@ -27,7 +27,7 @@ def parse_args():
                         help='Fine-tuning learning rate.')
     parser.add_argument('--epoch', type=int, default=20,
                         help='Fine-tuning rpoch.')
-    parser.add_argument('--mod', help='use ReFineMod', action='store_true')
+    parser.add_argument('--simple', help='use Simplified ReFine', action='store_true')
     parser.add_argument('--no_relu', help='use ReFineNoReLU', action='store_true')
     parser.add_argument('--random_seed', help='use model trained with random_seed', type=str, default=None)
     return parser.parse_args()
@@ -41,9 +41,9 @@ else:
 
 device = torch.device(f"cuda:{args.cuda}" if torch.cuda.is_available() else "cpu")
 
-if args.mod:
-    print(f"Using ReFineMod model with device {device}")
-    mod_path = "_mod"
+if args.simple:
+    print(f"Using Simplified ReFine model with device {device}")
+    mod_path = "_simple"
 elif args.no_relu:
     print(f"Using ReFineNoReLU model with device {device}")
     mod_path = "_no_relu"
