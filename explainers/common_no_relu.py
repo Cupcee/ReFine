@@ -49,8 +49,10 @@ class EdgeMaskNet(torch.nn.Module):
 
         x = torch.flatten(x, 1, -1)
         x = self.node_lin(x)
+        #x = F.relu(self.node_lin(x))
         for conv, batch_norm in zip(self.convs, self.batch_norms):
             x = conv(x, edge_index)
+            #x = F.relu(conv(x, edge_index))
             x = batch_norm(x)
 
         e = torch.cat([x[edge_index[0, :]], x[edge_index[1, :]]], dim=1)

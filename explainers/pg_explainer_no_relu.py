@@ -6,7 +6,7 @@ from torch_geometric.nn import MessagePassing
 import torch
 from torch_geometric.nn import MessagePassing
 from explainers.base import Explainer
-from .common import EdgeMaskNet
+from .common_no_relu import EdgeMaskNet
 
 EPS = 1e-6
 
