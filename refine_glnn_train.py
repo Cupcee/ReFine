@@ -1,26 +1,18 @@
+import os
 import time
 import random
+import json
 import argparse
-import numpy as np
 
-import os
+import torch
+import numpy as np
 import os.path as osp
 from tqdm import tqdm
 from pathlib import Path
 
-import torch
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch_geometric.data import DataLoader
-from config import data_root, log_root, param_root
-
-import sys
-sys.path.append('..')
-from gnns import *
-from datasets.graphss2_dataset import get_dataloader
-from utils import set_seed
-from explainers import ReFine
 from utils.dataset import get_datasets
-from utils.logger import Logger
+from explainers import *
+from torch_geometric.data import DataLoader
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Pretrain ReFine")
@@ -68,8 +60,6 @@ for i, r in enumerate(ratios):
     for g in tqdm(iter(test_loader), total=len(test_loader)):
         g.to(device)
         y = refine.explain_graph(g, fine_tune=True, ratio=r, lr=args.lr, epoch=args.epoch)
-        print(y)
-        raise Exception("lol")
 
 os.makedirs(args.result_dir, exist_ok=True)
 

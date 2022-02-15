@@ -167,4 +167,4 @@ for epoch in range(args.epoch):
 
 model_dir = osp.join(param_root, "refine/")
 os.makedirs(model_dir, exist_ok=True)
-torch.save(explainer, osp.join(model_dir, f'{args.dataset}_{args.random_seed if args.random_seed else ""}.pt'))
+torch.save(explainer, osp.join(model_dir, f'{args.dataset}{"_" + args.random_seed if args.random_seed else ""}.pt'))
