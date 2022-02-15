@@ -12,6 +12,7 @@ from pathlib import Path
 
 from utils.dataset import get_datasets
 from explainers import *
+from explainers.refine_glnn import ReFineGLNN
 from torch_geometric.data import DataLoader
 
 def parse_args():
@@ -32,36 +33,46 @@ def parse_args():
     return parser.parse_args()
 
 args = parse_args()
-results = {}
-if args.dataset == 'ba3':
-    ground_truth = True
-else:
-    ground_truth = False
 
 device = torch.device(f"cuda:{args.cuda}" if torch.cuda.is_available() else "cpu")
 
-train_dataset, val_dataset, test_dataset = get_datasets(name=args.dataset)
+_, _, test_dataset = get_datasets(name=args.dataset)
 
 graph_mask_path = f'param/filtered/{args.dataset}_idx_test.pt'
-print(f"Loading graph mask from {graph_mask_path}")
 graph_mask = torch.load(graph_mask_path)
 test_loader = DataLoader(test_dataset[graph_mask], batch_size=1, shuffle=False, drop_last=False)
-ratios = [0.1 *i for i in range(1,11)]
+#ratios = [0.1 *i for i in range(1,11)]
 
 refine_model_path = f'param/refine/{args.dataset}.pt'
-print(f"Loading model from {refine_model_path}")
 refine = torch.load(refine_model_path)
 refine.remap_device(device)
 
 #---------------------------------------------------
+in_features = torch.flatten(test_dataset[0].x, 1, -1).size(1)
+mlp_model = ReFineGLNN(device=device, in_features=in_features, out_features=1)
+loss_label = torch.nn.CrossEntropyLoss()
+loss_teacher = torch.nn.KLDivLoss()
+loss_lambda = 0.5
+optimizer = torch.optim.Adam(mlp_model.parameters(), lr=1e-4)
 print("Evaluate ReFine w.r.t. ACC-AUC...")
-for i, r in enumerate(ratios):
-    acc_logger = []
+for i in range(10):
+    running_loss = 0.0
     for g in tqdm(iter(test_loader), total=len(test_loader)):
         g.to(device)
-        y = refine.explain_graph(g, fine_tune=True, ratio=r, lr=args.lr, epoch=args.epoch)
+        z = refine.explain_graph(g, fine_tune=True, ratio=0.5, lr=args.lr, epoch=args.epoch)
 
-os.makedirs(args.result_dir, exist_ok=True)
+        optimizer.zero_grad()
+        y_hat = mlp_model(g.x)
+        loss = loss_lambda * loss_label(y_hat, g.y) + (1 - loss_lambda) * loss_teacher(y_hat, z)
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
 
-with open(os.path.join(args.result_dir, f"{args.dataset}_results.json"), "w") as f:
-    json.dump(results, f, indent=4)
+        if i % 500 == 499:
+            print('Loss after mini-batch %5d: %.3f' % (i + 1, running_loss / 500))
+            running_loss = 0.0
+
+#os.makedirs(args.result_dir, exist_ok=True)
+#
+#with open(os.path.join(args.result_dir, f"{args.dataset}_results.json"), "w") as f:
+#    json.dump(results, f, indent=4)
