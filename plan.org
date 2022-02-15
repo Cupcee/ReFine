@@ -19,13 +19,13 @@ CLOSED: [2022-01-29 Sat 14:04]
   Makes no difference
 
 
-* ReFine thoughts
+* ReFine idea
 1. Train on a dataset of graphs belonging to C classes
 2. Model learns a global view of these classes into C models
 3. Then fine-tune before each local explanation on the graph being explained
 
 
-* Test results (rounded to 3 decimal places)
+* Testing between original ReFine and without ReLU and Tanh nonlinearity
 
 | dataset | seed | ReFine                             | ReFine - no ReLU or Tanh           |
 |---------+------+------------------------------------+------------------------------------|
@@ -36,4 +36,9 @@ CLOSED: [2022-01-29 Sat 14:04]
 | MNIST   |    1 | ACC-AUC: 0.750                     | __ACC-AUC: 0.755__                 |
 | MUTAG   |    1 | __ACC-AUC: 0.947__                 | ACC-AUC: 0.939                     |
 
-* Results are very close (surprise?)
+- Results are very close (surprise?)
+
+* Observations on PGExplainer
+- PGExplainer in ReFine library has convolutional layers before the MLP
+- Not used in original PGExplainer paper
+- This seems to improve the model performance? Epochs are a bit slower to train though
