@@ -149,18 +149,22 @@ class ReFine(Explainer):
         return pos_idx, num_edge, num_node, sep_edge_idx
 
     def explain_graph(
-        self, graph, ratio=1.0, fine_tune=False,
+        self, graph, ratio=1.0, fine_tune=False, to_numpy=True,
         lr=1e-4, epoch=50, draw_graph=0, vis_ratio=0.2):
 
         if not fine_tune:
             edge_mask = self.get_mask(graph)
             edge_mask = self.__reparameterize__(edge_mask, training=False)
-            imp = edge_mask.detach().cpu().numpy()
-            self.last_result = (graph, imp)
+            if to_numpy:
+                imp = edge_mask.detach().cpu().numpy()
+                self.last_result = (graph, imp)
 
-            if draw_graph:
-                self.visualize(graph, imp, vis_ratio=vis_ratio)
-            return imp
+                if draw_graph:
+                    self.visualize(graph, imp, vis_ratio=vis_ratio)
+                return imp
+            else:
+                imp = edge_mask.detach()
+                return imp
 
         mask_net = copy.deepcopy(self.edge_mask[graph.y.item()])
         optimizer = torch.optim.Adam(mask_net.parameters(), lr=lr)
@@ -192,7 +196,7 @@ class ReFine(Explainer):
             fid_loss.backward()
             optimizer.step()
 
-        imp = edge_mask.detach().cpu().numpy()
+        imp = edge_mask.detach().cpu().numpy() if to_numpy else edge_mask.detach()
         self.last_result = (graph, imp)
 
         if draw_graph:

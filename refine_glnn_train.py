@@ -55,22 +55,28 @@ loss_teacher = torch.nn.KLDivLoss()
 loss_lambda = 0.5
 optimizer = torch.optim.Adam(mlp_model.parameters(), lr=1e-4)
 print("Evaluate ReFine w.r.t. ACC-AUC...")
-for i in range(10):
+for epoch in range(10):
     running_loss = 0.0
+    it = 0
     for g in tqdm(iter(test_loader), total=len(test_loader)):
         g.to(device)
-        z = refine.explain_graph(g, fine_tune=True, ratio=0.5, lr=args.lr, epoch=args.epoch)
+        z = refine.explain_graph(g, fine_tune=True, to_numpy=False, ratio=0.5, lr=args.lr, epoch=args.epoch)
 
         optimizer.zero_grad()
         y_hat = mlp_model(g.x)
-        loss = loss_lambda * loss_label(y_hat, g.y) + (1 - loss_lambda) * loss_teacher(y_hat, z)
+        print(y_hat.shape)
+        print(z.shape)
+        print(g.y.item())
+        loss = loss_lambda * loss_label(torch.transpose(y_hat, 0, 1), g.y) \
+            + (1 - loss_lambda) * loss_teacher(y_hat, z[g.y.item()])
         loss.backward()
         optimizer.step()
         running_loss += loss.item()
 
-        if i % 500 == 499:
+        if it % 500 == 499:
             print('Loss after mini-batch %5d: %.3f' % (i + 1, running_loss / 500))
             running_loss = 0.0
+        it += 1
 
 #os.makedirs(args.result_dir, exist_ok=True)
 #
