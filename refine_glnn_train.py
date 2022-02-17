@@ -64,11 +64,8 @@ for epoch in range(10):
 
         optimizer.zero_grad()
         y_hat = mlp_model(g.x)
-        print(y_hat.shape)
-        print(z.shape)
-        print(g.y.item())
         loss = loss_lambda * loss_label(torch.transpose(y_hat, 0, 1), g.y) \
-            + (1 - loss_lambda) * loss_teacher(y_hat, z[g.y.item()])
+            + (1 - loss_lambda) * loss_teacher(y_hat, z)
         loss.backward()
         optimizer.step()
         running_loss += loss.item()
