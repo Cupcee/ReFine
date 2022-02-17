@@ -219,23 +219,23 @@ class ReFine(Explainer):
 
         # ----------------------------------------------------
         # (2) compute contrastive loss
-        pos_idx, _, _, _ = self.get_pos_edge(graph, edge_mask, ratio)
-        pos_edge_mask = edge_mask[pos_idx]
-        pos_edge_index = graph.edge_index[:, pos_idx]
-        pos_edge_attr = graph.edge_attr[pos_idx, :]
-        self.__set_masks__(pos_edge_mask, self.model)
-        G1_x, G1_pos_edge_index, G1_batch, G1_pos = self.__relabel__(graph, pos_edge_index)
-        graph_rep = self.model.get_graph_rep(
-            x=G1_x,
-            edge_index=G1_pos_edge_index,
-            edge_attr=pos_edge_attr,
-            batch=G1_batch,
-            pos=G1_pos
-        )
-        cts_loss = self.get_contrastive_loss(graph_rep, graph.y, graph.batch)
-        self.__clear_masks__(self.model)
+        #pos_idx, _, _, _ = self.get_pos_edge(graph, edge_mask, ratio)
+        #pos_edge_mask = edge_mask[pos_idx]
+        #pos_edge_index = graph.edge_index[:, pos_idx]
+        #pos_edge_attr = graph.edge_attr[pos_idx, :]
+        #self.__set_masks__(pos_edge_mask, self.model)
+        #G1_x, G1_pos_edge_index, G1_batch, G1_pos = self.__relabel__(graph, pos_edge_index)
+        #graph_rep = self.model.get_graph_rep(
+        #    x=G1_x,
+        #    edge_index=G1_pos_edge_index,
+        #    edge_attr=pos_edge_attr,
+        #    batch=G1_batch,
+        #    pos=G1_pos
+        #)
+        #cts_loss = self.get_contrastive_loss(graph_rep, graph.y, graph.batch)
+        #self.__clear_masks__(self.model)
 
-        loss =  fid_loss + self.gamma * cts_loss
+        loss = fid_loss #+ self.gamma * cts_loss
 
         return loss
 
