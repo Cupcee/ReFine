@@ -5,9 +5,7 @@ import numpy as np
 import torch.nn as nn
 
 
-
-class ReFineGLNN(nn.Module):
-
+class GLNN(nn.Module):
     def __init__(self, device, in_features, out_features):
         super().__init__()
         self.layers = nn.Sequential(
@@ -15,7 +13,7 @@ class ReFineGLNN(nn.Module):
             nn.ReLU(),
             nn.Linear(64, 128),
             nn.ReLU(),
-            nn.Linear(128, out_features)
+            nn.Linear(128, out_features),
         ).to(device)
 
     def forward(self, x):
