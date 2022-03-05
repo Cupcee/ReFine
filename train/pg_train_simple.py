@@ -14,7 +14,7 @@ from utils import set_seed
 from utils.logger import Logger
 from utils.dataset import get_datasets
 from datasets.graphss2_dataset import get_dataloader
-from explainers import PGExplainer
+from explainers.pg_explainer_simple import PGExplainer
 from gnns import *
 
 np.set_printoptions(precision=2, suppress=True)

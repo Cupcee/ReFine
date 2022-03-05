@@ -12,7 +12,7 @@ class MLP(nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, act=nn.Tanh()):
         super(MLP, self).__init__()
         self.mlp = nn.Sequential(OrderedDict([
-                ('lin1', Lin(in_channels, out_channels)),
+                ('lin1', Lin(in_channels, hidden_channels)),
                 #('act', act),
                 ('lin2', Lin(hidden_channels, out_channels))
                 ]))
@@ -61,7 +61,7 @@ class EdgeMaskNet(torch.nn.Module):
         #if edge_attr.size(-1) > 1:
         #    e1 = self.edge_lin1(e)
         #    e2 = self.edge_lin2(edge_attr)
-        #    e = torch.cat([e1, e2], dim=1)  # connection
+            e = torch.cat([e1, e2], dim=1)  # connection
 
         return self.mlp(e)
 

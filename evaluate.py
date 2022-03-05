@@ -80,30 +80,30 @@ results["ReFine-FT"] = {"ROC-AUC": list(np.array(acc_logger).mean(axis=0)[0]),
                         "ACC-AUC": np.array(acc_logger).mean(axis=0).mean(),
                         "Recall@5": "nan" if not ground_truth else np.array(recall_logger).mean(axis=0)}
 
-#---------------------------------------------------
-print("Evaluate ReFine w.r.t. ACC-AUC...")
-recall_logger, tuned = [], []
-results["ReFine"] = {}
-for i, r in enumerate(ratios):
-    acc_logger = []
-    for g in tqdm(iter(test_loader), total=len(test_loader)):
-        g.to(device)
-        refine.explain_graph(g, fine_tune=True, ratio=r, lr=args.lr, epoch=args.epoch)
-        acc_logger.append(refine.evaluate_acc(ratios)[0]) # get list of accs for different ratios when training for ratio r
-    results["ReFine"]["R-%.2f" % r] = {"ROC-AUC": list(np.array(acc_logger).mean(axis=0)[0]), # get mean acc score for each ratio in ratios when training for ratio r
-                                    "ACC-AUC": np.array(acc_logger).mean(axis=0).mean(),} # get mean of the acc scores of the ratios when training for ratio r
-    tuned.append(np.array(acc_logger).mean(axis=0)[0,i]) # add mean acc score of ratio r into list
-results["ReFine"]["ROC-AUC"] = list(tuned) # list of mean acc scores when training for each ratio r in ratios
-results["ReFine"]["ACC-AUC"] = np.mean(tuned) # mean of means of acc scores between all ratios
-
-#---------------------------------------------------
-if ground_truth:
-    print("Evaluate ReFine w.r.t. Recall@5...")
-    for g in tqdm(iter(test_loader), total=len(test_loader)):
-        g.to(device)
-        refine.explain_graph(g, fine_tune=True, ratio=0.3, lr=1e-4, epoch=20)
-        recall_logger.append(refine.evaluate_recall(topk=5))
-    results["ReFine"]["Recall@5"] = np.mean(recall_logger)
+##---------------------------------------------------
+#print("Evaluate ReFine w.r.t. ACC-AUC...")
+#recall_logger, tuned = [], []
+#results["ReFine"] = {}
+#for i, r in enumerate(ratios):
+#    acc_logger = []
+#    for g in tqdm(iter(test_loader), total=len(test_loader)):
+#        g.to(device)
+#        refine.explain_graph(g, fine_tune=True, ratio=r, lr=args.lr, epoch=args.epoch)
+#        acc_logger.append(refine.evaluate_acc(ratios)[0]) # get list of accs for different ratios when training for ratio r
+#    results["ReFine"]["R-%.2f" % r] = {"ROC-AUC": list(np.array(acc_logger).mean(axis=0)[0]), # get mean acc score for each ratio in ratios when training for ratio r
+#                                    "ACC-AUC": np.array(acc_logger).mean(axis=0).mean(),} # get mean of the acc scores of the ratios when training for ratio r
+#    tuned.append(np.array(acc_logger).mean(axis=0)[0,i]) # add mean acc score of ratio r into list
+#results["ReFine"]["ROC-AUC"] = list(tuned) # list of mean acc scores when training for each ratio r in ratios
+#results["ReFine"]["ACC-AUC"] = np.mean(tuned) # mean of means of acc scores between all ratios
+#
+##---------------------------------------------------
+#if ground_truth:
+#    print("Evaluate ReFine w.r.t. Recall@5...")
+#    for g in tqdm(iter(test_loader), total=len(test_loader)):
+#        g.to(device)
+#        refine.explain_graph(g, fine_tune=True, ratio=0.3, lr=1e-4, epoch=20)
+#        recall_logger.append(refine.evaluate_recall(topk=5))
+#    results["ReFine"]["Recall@5"] = np.mean(recall_logger)
 
 print(results)
 os.makedirs(args.result_dir, exist_ok=True)
